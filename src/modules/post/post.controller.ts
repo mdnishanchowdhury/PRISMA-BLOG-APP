@@ -23,8 +23,12 @@ const getAllPort = async (req: Request, res: Response) => {
     try {
         const { search } = req.query;
         // console.log("search",search)
+
+
+        const tags = req.query.tags ? (req.query.tags as string).split(',') : [];
+
         const searchString = typeof search === 'string' ? search : undefined;
-        const result = await postService.getAllPost({ search: searchString });
+        const result = await postService.getAllPost({ search: searchString,tags });
 
         res.status(200).json(result);
     } catch (error) {
