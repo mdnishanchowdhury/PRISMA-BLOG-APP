@@ -21,7 +21,10 @@ const createPost = async (req: Request, res: Response) => {
 
 const getAllPort = async (req: Request, res: Response) => {
     try {
-        const result = await postService.getAllPost();
+        const { search } = req.query;
+        // console.log("search",search)
+        const searchString = typeof search === 'string' ? search : undefined;
+        const result = await postService.getAllPost({ search: searchString });
 
         res.status(200).json(result);
     } catch (error) {
