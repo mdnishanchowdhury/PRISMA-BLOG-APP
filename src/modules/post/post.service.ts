@@ -1,4 +1,4 @@
-import { Post } from "../../../generated/prisma/client";
+import { Post, PostStutas } from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
 import { prisma } from "../../lib/prisma";
 
@@ -12,45 +12,64 @@ const createPost = async (data: Omit<Post, "id" | "createdAt" | "updatedAt" | "a
     return result;
 }
 
-const getAllPost = async (payload: {
+const getAllPost = async ({
+    search,
+    tags,
+    isFeatured,
+    status
+}: {
     search: string | undefined,
-    tags: string[] | []
-
+    tags: string[] | [],
+    isFeatured: boolean | undefined,
+    status: PostStutas | undefined
 }) => {
 
     const andConditions: PostWhereInput[] = []
 
-    if (payload.search) {
+    if (search) {
         andConditions.push({
             OR: [
                 {
                     title: {
-                        contains: payload.search as string,
+                        contains: search as string,
                         mode: "insensitive"
                     }
                 },
                 {
                     content: {
-                        contains: payload.search as string,
+                        contains: search as string,
                         mode: "insensitive"
                     }
                 },
                 {
                     tags: {
-                        has: payload.search as string
+                        has: search as string
                     }
                 }
             ]
         })
     }
 
-    if (payload.tags.length > 0) {
+    if (tags.length > 0) {
         andConditions.push({
             tags: {
-                hasEvery: payload.tags as string[]
+                hasEvery: tags as string[]
             }
         })
     }
+
+    if (typeof isFeatured === 'boolean') {
+        andConditions.push({
+            isFeatured
+        })
+    }
+
+    if (status) {
+        andConditions.push({
+            status
+        })
+    }
+
     const allPost = await prisma.post.findMany({
         where: {
             AND: andConditions
