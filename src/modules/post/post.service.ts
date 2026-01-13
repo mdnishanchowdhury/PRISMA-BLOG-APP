@@ -19,7 +19,9 @@ const getAllPost = async ({
     status,
     page,
     limit,
-    skip
+    skip,
+    sortBy,
+    sortOrder
 }: {
     search: string | undefined,
     tags: string[] | [],
@@ -27,7 +29,9 @@ const getAllPost = async ({
     status: PostStutas | undefined
     page: number,
     limit: number,
-    skip: number
+    skip: number,
+    sortBy: string,
+    sortOrder: string
 }) => {
 
     const andConditions: PostWhereInput[] = []
@@ -81,6 +85,10 @@ const getAllPost = async ({
         skip,
         where: {
             AND: andConditions
+        },
+
+        orderBy: {
+            [sortBy]: sortOrder
         }
     });
     return allPost;
