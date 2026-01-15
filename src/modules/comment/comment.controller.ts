@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { commentService } from "./comment.service";
+import { At } from "../../../generated/prisma/internal/prismaNamespace";
 
 const createComment = async (req: Request, res: Response) => {
     try {
@@ -71,11 +72,26 @@ const updateComment = async (req: Request, res: Response) => {
         })
     }
 }
+const moderateComment = async (req: Request, res: Response) => {
+    try {
+        const user = req.user;
+        const { commentId } = req.params;
+        const result = await commentService.moderateComment(commentId as string, req.body)
+        res.status(200).json(result);
+
+    } catch (error) {
+        res.status(400).json({
+            error: "comment update failed",
+            details: error
+        })
+    }
+}
 
 export const commentController = {
     createComment,
     getCommentById,
     getCommentsByAuthor,
     deleteComment,
-    updateComment
+    updateComment,
+    moderateComment
 }
