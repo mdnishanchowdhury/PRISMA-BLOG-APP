@@ -4,8 +4,10 @@ import auth, { UserRole } from '../../middlewares/auth';
 const router = express.Router();
 
 router.get('/', postController.getAllPort)
+router.get('/stats', auth(UserRole.ADMIN), postController.getStats);
 router.get('/my-posts', auth(UserRole.USER, UserRole.ADMIN), postController.getMyPosts);
 router.get("/:postId", postController.getPostById)
+
 
 router.post('/', auth(UserRole.USER), postController.createPost);
 router.patch('/:postId', auth(UserRole.USER, UserRole.ADMIN), postController.updatePost);
